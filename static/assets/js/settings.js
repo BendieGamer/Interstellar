@@ -110,7 +110,6 @@ function saveEventKey() {
   // biome-ignore lint/correctness/noSelfAssign:
   window.location = window.location;
 }
-// Tab Cloaker
 const dropdown = document.getElementById("dropdown");
 const options = dropdown.getElementsByTagName("option");
 
@@ -163,16 +162,23 @@ function ResetCustomCloak() {
 function redirectToMainDomain() {
   const currentUrl = window.location.href;
   const mainDomainUrl = currentUrl.replace(/\/[^\/]*$/, "");
+  const target = mainDomainUrl + window.location.pathname;
   if (window !== top) {
-    top.location.href = mainDomainUrl + window.location.pathname;
-  } else {
-    window.location.href = mainDomainUrl + window.location.pathname;
-  }
+    try {
+      top.location.href = target
+    } catch {
+      try {
+        parent.location.href = target
+      } catch {
+        window.location.href = target
+      }
+    }
+  } else window.location.href = mainDomainUrl + window.location.pathname;
 }
 
 document.addEventListener("DOMContentLoaded", event => {
   const icon = document.getElementById("tab-favicon");
-  const name = document.getElementById("tab-title");
+  const name = document.getElementById("t");
   const selectedValue = localStorage.getItem("selectedOption") || "Default";
   document.getElementById("dropdown").value = selectedValue;
   updateHeadSection(selectedValue);
@@ -189,7 +195,7 @@ function handleDropdownChange(selectElement) {
 
 function updateHeadSection(selectedValue) {
   const icon = document.getElementById("tab-favicon");
-  const name = document.getElementById("tab-title");
+  const name = document.getElementById("t");
   const customName = localStorage.getItem("CustomName");
   const customIcon = localStorage.getItem("CustomIcon");
 
